@@ -13,22 +13,48 @@ from replit import db
 # ALLOCATING A DISCORD CLIENT INSTANCE
 client = discord.Client()
 
-about = '''Hi, I'm GearBot.
-           I automate all the administrative actions in GearAI's discord server. 
-           I could also convey you some useful information. I'm currently under development.\n
-           **Available commands:** 
-           ``` $hello - Just a dummy command.\n 
-               $help - Command to display Usage Instructions.\n 
-               $quote - Send an inspiring quote.```'''
-
+# PRE ASSIGNED ENCOURAGEMENT STATEMENT VARIABLES
 sad_words = ["sad", "depressed", "unhappy", "angry", "miserable", "anxious", "moody", "failure", "unworthy"]
-
 starter_encouragements = [
   "Cheer up!",
   "Hang in there.",
   "You are a great person.",
   "Nothing is impossible."
 ]
+
+# VARIABLE TO PRINT FOR COMMAND: $help
+about =("Hi, I'm GearBot.\n"
+        "I automate all the administrative actions in GearAI's discord server.\n"
+        "I could also convey you some useful information. I'm currently under development.\n"
+
+        "**Available commands:**\n"
+        "**General commmands:**\n"
+
+        "```"
+        "$helloworld - Just a simple way to ping me.\n"
+        "$help - Command to display Usage Instructions.\n"
+        "$quote - Send an inspiring quote.\n"
+        "```"
+
+        "Talk with a negative word and I'll cheer you up.\n"
+        "**Encouragement Database commands:**\n"
+
+        "```"
+
+        "$enc_toggle - Toggle to turn ON or turn OFF the cheer message functionality\n"
+        "Accepted values - boolean: true, false\n"
+        "Example - $enc_toggle true\n\n"
+
+        "$enc_add - Command to add a custom cheer message to the database\n"
+        "Accepted values - string (without single or double quotes)\n"
+        "Example - $enc_add Cheer up\n\n"
+        
+        "$enc_delete - Command to delete a custom cheer message from the database\n"
+        "Accepted values - int (index of the message which should be deleted)\n"
+        "Example - $enc_delete 2\n\n"
+
+        "$enc_list - Command to show the list of cheer messages added to the database\n"
+        "```")
 
 if "responding" not in db.keys():
   db["responding"] = True
@@ -73,41 +99,43 @@ async def on_message(message):
     quote = get_quote()
     await message.channel.send(f"So you have asked for quote, here it is.\n```{quote}```")
 
+  if message.content.startswith('$admin') and if discord.discord.Member.roles("Admin")
   if db["responding"]:
     options = starter_encouragements
     if "encouragements" in db.keys():
-      options = options + db["encouragements"]
+      options = options + list(db["encouragements"])
 
     if any(word in msg for word in sad_words):
       await message.channel.send(random.choice(options))
 
-  if msg.startswith("$new"):
-    encouraging_message = msg.split("$new ",1)[1]
+  if msg.startswith("$enc_add"):
+    encouraging_message = msg.split("$enc_add ",1)[1]
     update_encouragements(encouraging_message)
-    await message.channel.send("New encouraging message added.")
+    encouragements = db["encouragements"]
+    await message.channel.send(f"New cheer message added.\n**Updated database: **{list(encouragements)}")
 
-  if msg.startswith("$del"):
+  if msg.startswith("$enc_delete"):
     encouragements = []
     if "encouragements" in db.keys():
-      index = int(msg.split("$del",1)[1])
+      index = int(msg.split("$enc_delete",1)[1])
       delete_encouragment(index)
       encouragements = db["encouragements"]
-    await message.channel.send(encouragements)
+    await message.channel.send(f"Cheer message deleted.\n**Updated database: **{list(encouragements)}")
 
-  if msg.startswith("$list"):
+  if msg.startswith("$enc_list"):
     encouragements = []
     if "encouragements" in db.keys():
       encouragements = db["encouragements"]
     await message.channel.send(encouragements)
     
-  if msg.startswith("$responding"):
-    value = msg.split("$responding ",1)[1]
+  if msg.startswith("$enc_toggle"):
+    value = msg.split("$enc_toggle ",1)[1]
 
     if value.lower() == "true":
       db["responding"] = True
-      await message.channel.send("Responding is on.")
+      await message.channel.send("Cheer message service is now turned ON.")
     else:
       db["responding"] = False
-      await message.channel.send("Responding is off.")
+      await message.channel.send("Cheer message service is now turned OFF.")
 
 client.run(os.getenv("TOKEN"))
