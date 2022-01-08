@@ -1,3 +1,8 @@
+# GEARBOT - THE ADMIN BOT OF GEAR AI'S DISCORD SERVER
+
+# FILE NAME: main.py
+
+# IMPORING REQUIRED LIBRARIES
 import discord
 import os
 import requests
@@ -5,9 +10,16 @@ import json
 import random
 from replit import db
 
+# ALLOCATING A DISCORD CLIENT INSTANCE
 client = discord.Client()
 
-about = "Hi, I'm GearBot. I automate all the administrative actions in GearAI's discord server. I'm currently under development.\n**Available commands:** ``` $hello - Just a dummy command.\n $help - Command to display Usage Instructions.\n $quote - Send an inspiring quote.```"
+about = '''Hi, I'm GearBot.
+           I automate all the administrative actions in GearAI's discord server. 
+           I could also convey you some useful information. I'm currently under development.\n
+           **Available commands:** 
+           ``` $hello - Just a dummy command.\n 
+               $help - Command to display Usage Instructions.\n 
+               $quote - Send an inspiring quote.```'''
 
 sad_words = ["sad", "depressed", "unhappy", "angry", "miserable", "anxious", "moody", "failure", "unworthy"]
 
