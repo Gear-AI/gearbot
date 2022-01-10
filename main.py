@@ -9,9 +9,11 @@ import requests
 import json
 import random
 from replit import db
+from discord.ext.commands import Bot, has_permissions, CheckFailure
+import asyncio
 
 # ALLOCATING A DISCORD CLIENT INSTANCE
-client = discord.Client()
+client = Bot(command_prefix='$')
 
 # PRE ASSIGNED ENCOURAGEMENT STATEMENT VARIABLES
 sad_words = ["sad", "depressed", "unhappy", "angry", "miserable", "anxious", "moody", "failure", "unworthy"]
@@ -81,7 +83,29 @@ def delete_encouragment(index):
 
 @client.event
 async def on_ready():
-  print("We have logged in as {0.user}".format(client))
+  print("Logged in as {0.user}".format(client))
+
+@client.command(name="userinfo")
+async def userinfo(ctx,user:discord.Member=None):
+    if user==None:
+        user=ctx.author
+    rlist = []
+    for role in user.roles:
+      if role.name != "@everyone":
+        rlist.append(role.mention)
+    b = ", ".join(rlist)
+    embed = discord.Embed(colour=user.color,timestamp=ctx.message.created_at)
+    embed.set_author(name=f"User Info - {user}"),
+    embed.set_thumbnail(url=user.avatar_url),
+    embed.set_footer(text=f'Requested by - {ctx.author}',icon_url=ctx.author.avatar_url)
+    embed.add_field(name='ID:',value=user.id,inline=False)
+    embed.add_field(name='Name:',value=user.display_name,inline=False)
+    embed.add_field(name='Created at:',value=user.created_at,inline=False)
+    embed.add_field(name='Joined at:',value=user.joined_at,inline=False)
+    embed.add_field(name='Bot?',value=user.bot,inline=False)
+    embed.add_field(name=f'Roles:({len(rlist)})',value=''.join([b]),inline=False)
+    embed.add_field(name='Top Role:',value=user.top_role.mention,inline=False)
+    await ctx.send(embed=embed)
 
 @client.event
 async def on_message(message):
@@ -99,7 +123,6 @@ async def on_message(message):
     quote = get_quote()
     await message.channel.send(f"So you have asked for quote, here it is.\n```{quote}```")
 
-  if message.content.startswith('$admin') and if discord.discord.Member.roles("Admin")
   if db["responding"]:
     options = starter_encouragements
     if "encouragements" in db.keys():
@@ -126,7 +149,15 @@ async def on_message(message):
     encouragements = []
     if "encouragements" in db.keys():
       encouragements = db["encouragements"]
-    await message.channel.send(encouragements)
+    await message.channel.send("**ENCOURAGEMENT DATABASE**")
+    await message.channel.send("-"*40)
+    await message.channel.send("**Starter Encouragements**")
+    for stmt in starter_encouragements:
+      await message.channel.send(stmt)
+    await message.channel.send("-"*40)
+    await message.channel.send("**Add-On Encouragements**")
+    for stmt in list(encouragements):
+      await message.channel.send(stmt)
     
   if msg.startswith("$enc_toggle"):
     value = msg.split("$enc_toggle ",1)[1]
