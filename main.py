@@ -135,15 +135,16 @@ async def on_message(message):
     encouraging_message = msg.split("$enc_add ",1)[1]
     update_encouragements(encouraging_message)
     encouragements = db["encouragements"]
-    await message.channel.send(f"New cheer message added.\n**Updated database: **{list(encouragements)}")
+    await message.channel.send(f"New cheer message added.")
 
   if msg.startswith("$enc_delete"):
     encouragements = []
     if "encouragements" in db.keys():
-      index = int(msg.split("$enc_delete",1)[1])
-      delete_encouragment(index)
       encouragements = db["encouragements"]
-    await message.channel.send(f"Cheer message deleted.\n**Updated database: **{list(encouragements)}")
+      stmt = msg.split("$enc_delete",1)[1]
+      delete_encouragment(encouragements.index(stmt))
+      encouragements = db["encouragements"]
+    await message.channel.send(f"Cheer message deleted.")
 
   if msg.startswith("$enc_list"):
     encouragements = []
