@@ -141,7 +141,7 @@ async def on_message(message):
     encouragements = []
     if "encouragements" in db.keys():
       encouragements = db["encouragements"]
-      stmt = msg.split("$enc_delete",1)[1]
+      stmt = msg.split("$enc_delete ",1)[1]
       delete_encouragment(encouragements.index(stmt))
       encouragements = db["encouragements"]
     await message.channel.send(f"Cheer message deleted.")
