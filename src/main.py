@@ -11,14 +11,15 @@ import random
 from replit import db
 from discord.ext.commands import Bot, has_permissions, CheckFailure
 import asyncio
-from . import desc, enc
+from desc import * 
+from enc import *
 
 # ALLOCATING A DISCORD CLIENT INSTANCE
 client = Bot(command_prefix='$')
 
-about = desc.about
-sad_words = desc.sad_words
-starter_encouragements = desc.starter_encouragements
+about = about
+sad_words = sad_words
+starter_encouragements = starter_encouragements
 
 if "responding" not in db.keys():
   db["responding"] = True
@@ -60,7 +61,7 @@ async def on_message(message):
 
   if msg.startswith("$enc_add"):
     encouraging_message = msg.split("$enc_add ",1)[1]
-    enc.update_encouragements(encouraging_message)
+    update_encouragements(encouraging_message)
     encouragements = db["encouragements"]
     await message.channel.send(f"New cheer message added.")
 
@@ -69,7 +70,7 @@ async def on_message(message):
     if "encouragements" in db.keys():
       encouragements = db["encouragements"]
       stmt = msg.split("$enc_delete ",1)[1]
-      enc.delete_encouragment(encouragements.index(stmt))
+      delete_encouragment(encouragements.index(stmt))
       encouragements = db["encouragements"]
     await message.channel.send(f"Cheer message deleted.")
 

@@ -5,7 +5,7 @@
 # FILE CONTAINING ALL THE ENCOURAGEMENT FEATURE METHODS
 
 # IMPORTING REQUIRED LIBRARIES
-from . import desc
+from desc import *
 from replit import db
 
 def update_encouragements(encouraging_message):
